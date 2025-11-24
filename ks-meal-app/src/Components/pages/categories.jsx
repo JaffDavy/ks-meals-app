@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import useMealsStore from "../store/useMealsStore";
+import { useCategoryStore } from "../store/categoryStore";
 
-export default function Categories() {
-  const { categories, loading, error, fetchCategories } = useMealsStore();
+function Categories() {
+  const { categories, loading, error, fetchCategories } = useCategoryStore();
 
   useEffect(() => {
     fetchCategories();
@@ -19,20 +19,27 @@ export default function Categories() {
         </div>
       </main>
     );
-  if (error) return <div>{error}</div>;
+  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {categories.map((cat) => (
-        <div key={cat.idCategory} className="bg-white shadow p-4 rounded">
-          <img
-            src={cat.strCategoryThumb}
-            alt={cat.strCategory}
-            className="rounded mb-2"
-          />
-          <h2 className="font-bold text-center">{cat.strCategory}</h2>
-        </div>
-      ))}
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4">Categories</h1>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {categories.map((cat) => (
+          <div
+            key={cat.idCategory}
+            className="border rounded-lg p-2 shadow hover:scale-105 transition"
+          >
+            <img src={cat.strCategoryThumb} alt={cat.strCategory} />
+            <h2 className="text-center font-semibold mt-2">
+              {cat.strCategory}
+            </h2>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
+export default Categories;
