@@ -1,21 +1,42 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 export default function Home() {
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center py-20">
-      <h1 className="text-4xl font-bold mb-4">Welcome to MealsApp</h1>
-      <p className="mb-6 text-center max-w-xl">
-        Browse food categories and view meals. Data is fetched from TheMealDB.
-      </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+      <div className="bg-white p-8 md:p-12 rounded-xl shadow-2xl max-w-4xl w-full text-center">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 flex items-center justify-center">
+          <span className="mr-3 text-amber-500">🍽️</span>
+          Welcome to KS-MealsApp
+        </h1>
 
-      <button
-        onClick={() => nav("/categories")}
-        className="px-6 py-2 bg-blue-600 text-white rounded"
-      >
-        Get Started
-      </button>
+        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          Your culinary guide to exploring delicious food categories and viewing
+          detailed meal recipes from around the world.
+        </p>
+
+        <button
+          onClick={() => navigate("/categories")}
+          className="
+            px-10 py-3 
+            bg-amber-500 hover:bg-amber-600 
+            text-white 
+            text-lg font-semibold 
+            rounded-full 
+            transition duration-300 ease-in-out 
+            transform hover:scale-105 
+            shadow-lg hover:shadow-xl
+          "
+        >
+          Browse All Categories &rarr;
+        </button>
+
+        <p className="mt-8 text-sm text-gray-400">
+          Data proudly sourced from TheMealDB API.
+        </p>
+      </div>
     </div>
   );
 }
