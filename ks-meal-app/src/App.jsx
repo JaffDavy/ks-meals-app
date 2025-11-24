@@ -1,16 +1,15 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./Components/layout/layout";
+import Home from "./Components/pages/home";
+import Categories from "./Components/pages/categories";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+export default function App() {
   return (
-    <>
-      <p className="text-red-500">hello</p>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="categories" element={<Categories />} />
+      </Route>
+    </Routes>
   );
 }
-
-export default App;
