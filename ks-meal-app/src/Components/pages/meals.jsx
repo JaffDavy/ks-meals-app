@@ -1,13 +1,15 @@
 import { useEffect } from "react";
-import { useCategoryStore } from "../store/categoryStore";
+import { useParams } from "react-router-dom";
+import { useMealsStore } from "../store/mealsStore";
 import { Link } from "react-router-dom";
 
-function Categories() {
-  const { categories, loading, error, fetchCategories } = useCategoryStore();
+function Meals() {
+  const { name } = useParams();
+  const { meals, loading, error, fetchMeals } = useMealsStore();
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchMeals(name);
+  }, [name]);
 
   if (loading)
     return (
@@ -20,28 +22,21 @@ function Categories() {
         </div>
       </main>
     );
-
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Categories</h1>
+      <h1 className="text-xl font-bold mb-4">{name} Meals</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {categories.map((cat) => (
+        {meals.map((meal) => (
           <Link
-            to={`/category/${cat.strCategory}`}
-            key={cat.idCategory}
+            to={`/meal/${meal.idMeal}`}
+            key={meal.idMeal}
             className="border rounded-lg p-2 shadow hover:scale-105 transition block"
           >
-            <img
-              src={cat.strCategoryThumb}
-              alt={cat.strCategory}
-              className="rounded"
-            />
-            <h2 className="text-center font-semibold mt-2">
-              {cat.strCategory}
-            </h2>
+            <img src={meal.strMealThumb} alt={meal.strMeal} />
+            <h2 className="text-center font-semibold mt-2">{meal.strMeal}</h2>
           </Link>
         ))}
       </div>
@@ -49,4 +44,4 @@ function Categories() {
   );
 }
 
-export default Categories;
+export default Meals;
