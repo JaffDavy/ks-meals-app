@@ -33,9 +33,7 @@ export default function Home() {
           Browse All Categories &rarr;
         </button>
 
-        <p className="mt-8 text-sm text-gray-400">
-          Data proudly sourced from TheMealDB API.
-        </p>
+        <p className="mt-8 text-sm text-gray-400"></p>
       </div>
     </div>
   );

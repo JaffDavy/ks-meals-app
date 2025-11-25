@@ -1,5 +1,6 @@
 import Header from "../header";
 import { Outlet } from "react-router-dom";
+import SearchBar from "../SearchBar";
 
 export default function Layout() {
   return (

@@ -1,52 +1,70 @@
-import { useEffect } from "react";
-import { useCategoryStore } from "../store/categoryStore";
+import { useState, useEffect } from "react";
+import SearchBar from "../SearchBar";
 import { Link } from "react-router-dom";
 
-function Categories() {
-  const { categories, loading, error, fetchCategories } = useCategoryStore();
+export default function Categories() {
+  const [categories, setCategories] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCategories();
+    fetch("https://www.themealdb.com/api/json/v1/1/categories.php")
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data.categories);
+        setFiltered(data.categories);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
+
+  const handleSearch = (text) => {
+    const results = categories.filter((cat) =>
+      cat.strCategory.toLowerCase().includes(text.toLowerCase())
+    );
+    setFiltered(results);
+  };
 
   if (loading)
     return (
-      <main>
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-white font-mono text-xl animate-pulse">
-            Loading...
-          </p>
-        </div>
+      <main className="flex flex-col items-center justify-center h-screen text-white">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-white font-mono text-xl animate-pulse mt-4">
+          Loading categories...
+        </p>
       </main>
     );
 
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
-
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Categories</h1>
+    <div className="p-4 text-white">
+      <h1 className="text-black text-3xl font-bold text-center mb-4">
+        Categories
+      </h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {categories.map((cat) => (
+      <SearchBar onSearch={handleSearch} placeholder="Search categories..." />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        {filtered.map((cat) => (
           <Link
             to={`/category/${cat.strCategory}`}
             key={cat.idCategory}
-            className="border rounded-lg p-2 shadow hover:scale-105 transition block"
+            className="bg-gray-800 p-3 rounded text-center hover:scale-105 transition"
           >
             <img
               src={cat.strCategoryThumb}
+              className="rounded mb-2"
               alt={cat.strCategory}
-              className="rounded"
             />
-            <h2 className="text-center font-semibold mt-2">
-              {cat.strCategory}
-            </h2>
+            <p className="font-semibold">{cat.strCategory}</p>
           </Link>
         ))}
       </div>
+
+      {filtered.length === 0 && (
+        <p className="text-center text-red-400 mt-6">
+          No matching categories found.
+        </p>
+      )}
     </div>
   );
 }
-
-export default Categories;

@@ -13,7 +13,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="categories" element={<Categories />} />
         <Route path="/category/:name" element={<Meals />} />
-        <Route path="/category/:category" element={<CategoryMeals />} />
+        <Route path="category/:category" element={<CategoryMeals />} />
         <Route path="/meal/:id" element={<MealDetails />} />
       </Route>
     </Routes>
