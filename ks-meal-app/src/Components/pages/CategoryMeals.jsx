@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 function CategoryMeals() {
   const { category } = useParams();
+  const navigate = useNavigate();
+
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     async function fetchMeals() {
+      setLoading(true);
       try {
         const res = await fetch(
           `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
@@ -16,7 +19,7 @@ function CategoryMeals() {
         const data = await res.json();
         setMeals(data.meals || []);
       } catch (err) {
-        console.error("Failed to load meals");
+        console.error("❌ Failed to load meals:", err);
       } finally {
         setLoading(false);
       }
@@ -29,23 +32,26 @@ function CategoryMeals() {
     meal.strMeal.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-white">
         Loading meals...
       </div>
     );
+  }
 
   return (
     <div className="p-4">
-      <Link
-        to={-1}
+      <button
+        onClick={() => navigate(-1)}
         className="inline-block bg-gray-700 text-white px-4 py-2 rounded mb-4 hover:bg-gray-600 transition"
       >
         ← Back
-      </Link>
+      </button>
 
-      <h1 className="text-3xl font-bold mb-4 text-center">{category} Meals</h1>
+      <h1 className="text-3xl font-bold mb-4 text-center capitalize">
+        {category} Meals
+      </h1>
 
       <input
         type="text"

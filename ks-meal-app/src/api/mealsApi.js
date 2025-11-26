@@ -1,18 +1,10 @@
-import axios from "axios";
+import ky from "ky";
 
-const API = "https://www.themealdb.com/api/json/v1/1";
+const api = ky.create({
+  prefixUrl: "https://www.themealdb.com/api/json/v1/1",
+});
 
-export const getCategories = async () => {
-  const res = await axios.get(`${API}/categories.php`);
-  return res.data.categories;
-};
-
-export const getMealsByCategory = async (cat) => {
-  const res = await axios.get(`${API}/filter.php?c=${cat}`);
-  return res.data.meals;
-};
-
-export const getMealDetails = async (id) => {
-  const res = await axios.get(`${API}/lookup.php?i=${id}`);
-  return res.data.meals[0];
-};
+export const getCategories = () => api.get("categories.php").json();
+export const getMealsByCategory = (category) =>
+  api.get(`filter.php?c=${category}`).json();
+export const getMealDetails = (id) => api.get(`lookup.php?i=${id}`).json();
