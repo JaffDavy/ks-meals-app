@@ -1,30 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getMealDetails } from "../services/meals.service";
 
 function MealDetails() {
   const { id } = useParams();
-  const [meal, setMeal] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchMeal() {
-      try {
-        const res = await fetch(
-          `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
-        );
-        const data = await res.json();
-        setMeal(data.meals[0]);
-      } catch (err) {
-        console.error("Failed to load meal details");
-      } finally {
-        setLoading(false);
-      }
-    }
+  const { isLoading, data, error } = useQuery({
+    queryKey: ["mealDetails", id],
+    queryFn: () => getMealDetails(id),
+  });
 
-    fetchMeal();
-  }, [id]);
-
-  if (loading)
+  if (isLoading)
     return (
       <div className="flex justify-center items-center h-screen text-white">
         <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -34,7 +22,9 @@ function MealDetails() {
       </div>
     );
 
-  if (!meal)
+  console.log(data.meals);
+
+  if (!data.meals)
     return (
       <p className="text-red-500 text-center mt-10 font-bold text-xl">
         Meal not found.
@@ -42,13 +32,15 @@ function MealDetails() {
     );
 
   const ingredients = [];
+
   for (let i = 1; i <= 20; i++) {
-    const ingredient = meal[`strIngredient${i}`];
-    const measure = meal[`strMeasure${i}`];
+    const ingredient = data.meals[0][`strIngredient${i}`];
+    const measure = data.meals[0][`strMeasure${i}`];
     if (ingredient && ingredient.trim() !== "") {
       ingredients.push(`${ingredient} - ${measure}`);
     }
   }
+  console.log("Ingredients:", ingredients);
 
   return (
     <div className="p-4 max-w-4xl mx-auto space-y-8">
@@ -60,13 +52,13 @@ function MealDetails() {
       </Link>
 
       <h1 className="text-4xl font-bold text-center text-gray-900">
-        {meal.strMeal}
+        {data.meals[0].strMeal}
       </h1>
 
       <div className="flex justify-center">
         <img
-          src={meal.strMealThumb}
-          alt={meal.strMeal}
+          src={data.meals[0].strMealThumb}
+          alt={data.meals[0].strMeal}
           className="rounded-xl shadow-2xl w-full max-w-2xl hover:scale-105 transition-transform"
         />
       </div>
@@ -85,7 +77,7 @@ function MealDetails() {
       <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-md">
         <h2 className="text-white text-2xl font-semibold mb-4">Instructions</h2>
         <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">
-          {meal.strInstructions}
+          {data.meals[0].strInstructions}
         </p>
       </div>
     </div>

@@ -3,7 +3,7 @@ import {
   getCategories,
   getMealsByCategory,
   getMealDetails,
-} from "../../api/mealsApi";
+} from "../services/meals.service";
 
 const useMealsStore = create((set) => ({
   categories: [],

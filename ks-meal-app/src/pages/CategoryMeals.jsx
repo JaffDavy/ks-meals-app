@@ -1,44 +1,32 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { getMealsByCategory } from "../services/meals.service";
 
 function CategoryMeals() {
   const { category } = useParams();
   const navigate = useNavigate();
 
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    async function fetchMeals() {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
-        );
-        const data = await res.json();
-        setMeals(data.meals || []);
-      } catch (err) {
-        console.error("❌ Failed to load meals:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const { data, isLoading } = useQuery({
+    queryKey: ["meals", category],
+    queryFn: () => getMealsByCategory(category),
+  });
 
-    fetchMeals();
-  }, [category]);
-
-  const filteredMeals = meals.filter((meal) =>
-    meal.strMeal.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen text-white">
         Loading meals...
       </div>
     );
   }
+
+  console.log(data.meals);
+
+  const filteredMeals = data.meals.filter((meal) =>
+    meal.strMeal.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="p-4">
@@ -53,15 +41,17 @@ function CategoryMeals() {
         {category} Meals
       </h1>
 
-      <input
-        type="text"
-        placeholder="Search meals..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full p-2 mb-6 rounded bg-gray-800 text-white border border-gray-600"
-      />
+      <div className="flex flex-col items-center">
+        <input
+          type="text"
+          placeholder="Search meals..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-md p-2 mb-6 rounded-lg bg-gray-800 text-white border border-gray-600"
+        />
+      </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="text-white grid grid-cols-2 md:grid-cols-3 gap-4">
         {filteredMeals.map((meal) => (
           <Link
             to={`/meal/${meal.idMeal}`}

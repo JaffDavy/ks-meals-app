@@ -1,6 +1,6 @@
-import Header from "../header";
+import Header from "../Components/header";
 import { Outlet } from "react-router-dom";
-import SearchBar from "../SearchBar";
+import SearchBar from "../Components/SearchBar";
 
 export default function Layout() {
   return (

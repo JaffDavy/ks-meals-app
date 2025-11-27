@@ -1,31 +1,24 @@
 import { useState, useEffect } from "react";
-import SearchBar from "../SearchBar";
+import SearchBar from "../Components/SearchBar";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "../services/meals.service";
 
 export default function Categories() {
-  const [categories, setCategories] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
 
   useEffect(() => {
-    fetch("https://www.themealdb.com/api/json/v1/1/categories.php")
-      .then((res) => res.json())
-      .then((data) => {
-        setCategories(data.categories);
-        setFiltered(data.categories);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    if (data?.categories) {
+      setFiltered(data.categories);
+    }
+  }, [data]);
 
-  const handleSearch = (text) => {
-    const results = categories.filter((cat) =>
-      cat.strCategory.toLowerCase().includes(text.toLowerCase())
-    );
-    setFiltered(results);
-  };
-
-  if (loading)
+  if (isLoading)
     return (
       <main className="flex flex-col items-center justify-center h-screen text-white">
         <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -34,6 +27,15 @@ export default function Categories() {
         </p>
       </main>
     );
+
+  const { categories } = data;
+
+  const handleSearch = (text) => {
+    const results = categories.filter((cat) =>
+      cat.strCategory.toLowerCase().includes(text.toLowerCase())
+    );
+    setFiltered(results);
+  };
 
   return (
     <div className="p-4 text-white">
